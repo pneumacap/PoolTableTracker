@@ -12,5 +12,10 @@ def initialize_tables():
             db.session.commit()
 
 if __name__ == "__main__":
+    # Drop and recreate tables to update schema
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
+    
     initialize_tables()
     app.run(host="0.0.0.0", port=5000)
