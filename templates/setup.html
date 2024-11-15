@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Business Setup</h2>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="card">
+        <div class="card-body">
+            <form method="POST">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="business_name" class="form-label">Business Name</label>
+                        <input type="text" class="form-control" id="business_name" name="business_name" 
+                               value="{{ config.business_name if config else '' }}" required>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label for="num_tables" class="form-label">Number of Tables</label>
+                        <input type="number" class="form-control" id="num_tables" name="num_tables" 
+                               value="{{ config.num_tables if config else 4 }}" min="1" required>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label for="standard_rate" class="form-label">Standard Rate ($/hour)</label>
+                        <input type="number" class="form-control" id="standard_rate" name="standard_rate" 
+                               value="{{ config.standard_rate if config else 30.0 }}" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label for="peak_rate" class="form-label">Peak Rate ($/hour)</label>
+                        <input type="number" class="form-control" id="peak_rate" name="peak_rate" 
+                               value="{{ config.peak_rate if config else 45.0 }}" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label for="minimum_minutes" class="form-label">Minimum Minutes</label>
+                        <input type="number" class="form-control" id="minimum_minutes" name="minimum_minutes" 
+                               value="{{ config.minimum_minutes if config else 30 }}" min="1" required>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label for="peak_start_time" class="form-label">Peak Hours Start</label>
+                        <input type="time" class="form-control" id="peak_start_time" name="peak_start_time" 
+                               value="{{ config.peak_start_time.strftime('%H:%M') if config and config.peak_start_time else '17:00' }}" required>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label for="peak_end_time" class="form-label">Peak Hours End</label>
+                        <input type="time" class="form-control" id="peak_end_time" name="peak_end_time" 
+                               value="{{ config.peak_end_time.strftime('%H:%M') if config and config.peak_end_time else '22:00' }}" required>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Save Configuration</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
