@@ -113,21 +113,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
         table.timer = setInterval(() => {
             const now = new Date();
-            const diff = now - table.startTime; // Time difference in milliseconds
+            const elapsedTime = Math.max(0, now - table.startTime);
+            const totalSeconds = Math.floor(elapsedTime / 1000);
             
-            // Calculate hours, minutes, and seconds using proper division and modulo
-            const totalSeconds = Math.floor(diff / 1000);
             const hours = Math.floor(totalSeconds / 3600);
             const minutes = Math.floor((totalSeconds % 3600) / 60);
             const seconds = totalSeconds % 60;
 
-            // Update timer display with padded values
             tableEl.querySelector('.timer').textContent = 
                 `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
-            // Update cost (using the exact time difference for accurate calculation)
-            const hoursFraction = diff / (1000 * 60 * 60); // Convert milliseconds to hours
-            const cost = (hoursFraction * RATE_PER_HOUR).toFixed(2);
+            const hoursFraction = elapsedTime / (1000 * 60 * 60);
+            const cost = Math.max(0, (hoursFraction * RATE_PER_HOUR)).toFixed(2);
             tableEl.querySelector('.cost').textContent = cost;
         }, 1000);
     }
