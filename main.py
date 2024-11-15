@@ -7,11 +7,10 @@ def initialize_tables():
         # Create admin user if it doesn't exist
         admin = User.query.filter_by(username='admin').first()
         if not admin:
-            admin = User(
-                username='admin',
-                email='admin@example.com',
-                is_admin=True
-            )
+            admin = User()
+            admin.username = 'admin'
+            admin.email = 'admin@example.com'
+            admin.is_admin = True
             admin.set_password('admin')  # Default password, should be changed
             db.session.add(admin)
             db.session.commit()
@@ -19,27 +18,44 @@ def initialize_tables():
         # Create default business config if it doesn't exist
         config = BusinessConfig.query.first()
         if not config:
-            config = BusinessConfig(
-                business_name='Pool Hall',
-                num_tables=4,
-                standard_rate=30.0,
-                peak_rate=45.0,
-                minimum_minutes=30,
-                peak_start_time=datetime.strptime('17:00', '%H:%M').time(),
-                peak_end_time=datetime.strptime('22:00', '%H:%M').time(),
-                updated_by_id=admin.id
-            )
+            config = BusinessConfig()
+            config.business_name = 'Pool Hall'
+            config.num_tables = 4
+            config.standard_rate = 30.0
+            config.peak_rate = 45.0
+            config.minimum_minutes = 30
+            config.peak_start_time = datetime.strptime('17:00', '%H:%M').time()
+            config.peak_end_time = datetime.strptime('22:00', '%H:%M').time()
+            config.updated_by_id = admin.id
             db.session.add(config)
             db.session.commit()
 
-        # Create pool tables based on configuration
-        existing_tables = PoolTable.query.count()
-        num_tables = config.num_tables if config else 4
-        if existing_tables < num_tables:
-            for i in range(existing_tables, num_tables):
-                table = PoolTable(table_number=i+1)
-                db.session.add(table)
-            db.session.commit()
+        # Update pool tables based on configuration
+        if not config:
+            return
+            
+        # Get existing tables ordered by number
+        existing_tables = PoolTable.query.order_by(PoolTable.table_number).all()
+        num_tables = config.num_tables
+        
+        # Remove excess tables if num_tables decreased
+        if len(existing_tables) > num_tables:
+            for table in existing_tables[num_tables:]:
+                db.session.delete(table)
+        
+        # Add new tables if num_tables increased
+        if len(existing_tables) < num_tables:
+            for i in range(len(existing_tables), num_tables):
+                new_table = PoolTable()
+                new_table.table_number = i + 1
+                db.session.add(new_table)
+        
+        # Update table numbers to ensure sequential ordering
+        tables = PoolTable.query.order_by(PoolTable.table_number).all()
+        for i, table in enumerate(tables):
+            table.table_number = i + 1
+            
+        db.session.commit()
 
 if __name__ == "__main__":
     # Drop and recreate tables to update schema

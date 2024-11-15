@@ -72,18 +72,24 @@ def setup():
         if not config:
             config = models.BusinessConfig()
         
-        config.business_name = request.form.get('business_name')
-        config.num_tables = int(request.form.get('num_tables'))
-        config.standard_rate = float(request.form.get('standard_rate'))
-        config.peak_rate = float(request.form.get('peak_rate'))
-        config.minimum_minutes = int(request.form.get('minimum_minutes'))
-        config.peak_start_time = datetime.strptime(request.form.get('peak_start_time'), '%H:%M').time()
-        config.peak_end_time = datetime.strptime(request.form.get('peak_end_time'), '%H:%M').time()
+        config.business_name = request.form.get('business_name', '')
+        config.num_tables = int(request.form.get('num_tables', 4))
+        config.standard_rate = float(request.form.get('standard_rate', 30.0))
+        config.peak_rate = float(request.form.get('peak_rate', 45.0))
+        config.minimum_minutes = int(request.form.get('minimum_minutes', 30))
+        peak_start = request.form.get('peak_start_time', '17:00')
+        peak_end = request.form.get('peak_end_time', '22:00')
+        config.peak_start_time = datetime.strptime(peak_start, '%H:%M').time()
+        config.peak_end_time = datetime.strptime(peak_end, '%H:%M').time()
         config.updated_by_id = current_user.id
         config.last_updated = datetime.utcnow()
         
         db.session.add(config)
         db.session.commit()
+        
+        # Initialize tables with new configuration
+        from main import initialize_tables
+        initialize_tables()
         
         flash('Configuration updated successfully')
         return redirect(url_for('setup'))
@@ -119,12 +125,12 @@ def start_table(table_id):
     table = models.PoolTable.query.get_or_404(table_id)
     
     if not table.is_occupied:
-        session = models.TableSession(
-            table_id=table_id,
-            customer_name=customer_name,
-            start_time=datetime.utcnow(),
-            operator_id=current_user.id
-        )
+        session = models.TableSession()
+        session.table_id = table_id
+        session.customer_name = customer_name
+        session.start_time = datetime.utcnow()
+        session.operator_id = current_user.id
+        
         table.is_occupied = True
         db.session.add(session)
         db.session.commit()
