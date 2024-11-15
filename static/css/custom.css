@@ -1,0 +1,45 @@
+.card {
+    transition: all 0.3s ease;
+}
+
+.table-icon {
+    width: 100px;
+    height: 100px;
+}
+
+.status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+[data-status="available"] .status-indicator {
+    background-color: var(--bs-success);
+}
+
+[data-status="occupied"] .status-indicator {
+    background-color: var(--bs-danger);
+}
+
+[data-status="occupied"] {
+    border-color: var(--bs-danger);
+}
+
+.table-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.timer {
+    font-family: monospace;
+    font-size: 1.2em;
+}
+
+.customer-info {
+    text-align: center;
+    margin-bottom: 1rem;
+}

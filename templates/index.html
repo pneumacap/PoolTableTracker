@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2>Pool Tables</h2>
+        <p class="text-muted">Rate: $30/hour</p>
+    </div>
+</div>
+
+<div class="row g-4" id="tables-grid">
+    {% for table in tables %}
+    <div class="col-md-4 col-lg-3">
+        <div class="card h-100" id="table-{{ table.id }}" 
+             data-table-id="{{ table.id }}"
+             data-status="{{ 'occupied' if table.is_occupied else 'available' }}">
+            <div class="card-body">
+                <div class="text-center mb-3">
+                    <img src="/static/images/pool-table.svg" alt="Pool Table" class="table-icon">
+                </div>
+                <h5 class="card-title text-center">Table {{ table.id }}</h5>
+                <div class="table-status mb-2">
+                    <span class="status-indicator"></span>
+                    <span class="status-text">Available</span>
+                </div>
+                <div class="customer-info d-none">
+                    <p class="mb-2">Customer: <span class="customer-name"></span></p>
+                    <p class="mb-2">Time: <span class="timer">00:00:00</span></p>
+                    <p class="mb-2">Cost: $<span class="cost">0.00</span></p>
+                </div>
+                <div class="table-controls">
+                    <button class="btn btn-success btn-start w-100 mb-2">Start Session</button>
+                    <button class="btn btn-danger btn-stop w-100 d-none">End Session</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Start Session Modal -->
+<div class="modal fade" id="startSessionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Start New Session</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="startSessionForm">
+                    <div class="mb-3">
+                        <label for="customerName" class="form-label">Customer Name</label>
+                        <input type="text" class="form-control" id="customerName" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmStart">Start Session</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/tables.js"></script>
+{% endblock %}
