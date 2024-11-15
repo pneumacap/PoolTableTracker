@@ -1,4 +1,6 @@
 import os
+import time
+import json
 from datetime import datetime
 from flask import Flask, render_template, jsonify, request, Response
 from flask_sqlalchemy import SQLAlchemy
@@ -62,20 +64,39 @@ def stop_table(table_id):
 def stream():
     def event_stream():
         while True:
-            tables = models.PoolTable.query.all()
-            data = []
-            for table in tables:
-                session = models.TableSession.query.filter_by(
-                    table_id=table.id, 
-                    end_time=None
-                ).first()
-                data.append({
-                    'id': table.id,
-                    'is_occupied': table.is_occupied,
-                    'customer_name': session.customer_name if session else None,
-                    'start_time': session.start_time.isoformat() if session else None
-                })
-            yield f"data: {str(data)}\n\n"
-            db.session.commit()  # Reset session
+            try:
+                with app.app_context():
+                    # Create a new session for this iteration
+                    tables = models.PoolTable.query.all()
+                    data = []
+                    for table in tables:
+                        session = models.TableSession.query.filter_by(
+                            table_id=table.id, 
+                            end_time=None
+                        ).first()
+                        data.append({
+                            'id': table.id,
+                            'is_occupied': table.is_occupied,
+                            'customer_name': session.customer_name if session else None,
+                            'start_time': session.start_time.isoformat() if session else None
+                        })
+                    
+                    # Convert data to JSON string
+                    json_data = json.dumps(data)
+                    yield f"data: {json_data}\n\n"
+                    
+                    # Clean up the session
+                    db.session.remove()
+                    
+                    # Add sleep to prevent excessive queries (2 seconds)
+                    time.sleep(2)
+            except Exception as e:
+                # Log the error (in production, use proper logging)
+                print(f"Error in event stream: {str(e)}")
+                # Yield an error event
+                yield f"event: error\ndata: {json.dumps({'error': str(e)})}\n\n"
+                # Add a longer sleep on error to prevent rapid retries
+                time.sleep(5)
+                continue
 
     return Response(event_stream(), mimetype='text/event-stream')
