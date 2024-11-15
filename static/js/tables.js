@@ -1,13 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
     const RATE_PER_HOUR = 30;
     const tables = {};
-    let startModal;
+    let startModal, summaryModal;
     let selectedTableId;
 
     // Initialize tables and SSE
     initializeTables();
     initializeSSE();
-    initializeModal();
+    initializeModals();
 
     function initializeTables() {
         document.querySelectorAll('[data-table-id]').forEach(tableEl => {
@@ -24,8 +24,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function initializeModal() {
+    function initializeModals() {
         startModal = new bootstrap.Modal(document.getElementById('startSessionModal'));
+        summaryModal = new bootstrap.Modal(document.getElementById('sessionSummaryModal'));
         document.getElementById('confirmStart').addEventListener('click', startSession);
     }
 
@@ -43,6 +44,12 @@ document.addEventListener('DOMContentLoaded', function() {
         startModal.show();
     }
 
+    function showSummaryModal(finalTime, finalCost) {
+        document.getElementById('summaryTime').textContent = finalTime;
+        document.getElementById('summaryCost').textContent = finalCost;
+        summaryModal.show();
+    }
+
     async function startSession() {
         const customerName = document.getElementById('customerName').value;
         if (!customerName) return;
@@ -58,19 +65,29 @@ document.addEventListener('DOMContentLoaded', function() {
         const data = await response.json();
         if (data.status === 'success') {
             startModal.hide();
+            const table = tables[selectedTableId];
+            table.startTime = new Date();
+            startTimer(selectedTableId);
         }
     }
 
     async function stopSession(tableId) {
+        const table = tables[tableId];
+        const tableEl = table.element;
+        const finalTime = tableEl.querySelector('.timer').textContent;
+        const finalCost = tableEl.querySelector('.cost').textContent;
+        
+        showSummaryModal(finalTime, finalCost);
+
         const response = await fetch(`/table/${tableId}/stop`, {
             method: 'POST'
         });
         
         const data = await response.json();
         if (data.status === 'success') {
-            clearInterval(tables[tableId].timer);
-            tables[tableId].timer = null;
-            tables[tableId].startTime = null;
+            clearInterval(table.timer);
+            table.timer = null;
+            table.startTime = null;
         }
     }
 
@@ -98,10 +115,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Update customer name
                 tableEl.querySelector('.customer-name').textContent = tableData.customer_name;
 
-                // Start or update timer
-                if (!table.timer) {
+                // Start or update timer if not already running
+                if (!table.timer && tableData.start_time) {
                     table.startTime = new Date(tableData.start_time);
-                    startTimer(tableData.id);
                 }
             }
         });

@@ -3,6 +3,7 @@ from datetime import datetime
 
 class PoolTable(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    table_number = db.Column(db.Integer, unique=True, nullable=False)
     is_occupied = db.Column(db.Boolean, default=False)
     sessions = db.relationship('TableSession', backref='table', lazy=True)
 

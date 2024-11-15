@@ -18,7 +18,7 @@
                 <div class="text-center mb-3">
                     <img src="/static/images/pool-table.svg" alt="Pool Table" class="table-icon">
                 </div>
-                <h5 class="card-title text-center">Table {{ table.id }}</h5>
+                <h5 class="card-title text-center">Table {{ table.table_number }}</h5>
                 <div class="table-status mb-2">
                     <span class="status-indicator"></span>
                     <span class="status-text">Available</span>
@@ -57,6 +57,28 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary" id="confirmStart">Start Session</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Session Summary Modal -->
+<div class="modal fade" id="sessionSummaryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Session Summary</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <h4>Session Complete</h4>
+                    <p class="mb-3">Total Time: <span id="summaryTime" class="fw-bold"></span></p>
+                    <p class="mb-3">Total Cost: $<span id="summaryCost" class="fw-bold"></span></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

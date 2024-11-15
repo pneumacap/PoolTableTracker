@@ -6,8 +6,8 @@ def initialize_tables():
         # Create 4 pool tables if they don't exist
         existing_tables = PoolTable.query.count()
         if existing_tables == 0:
-            for _ in range(4):
-                table = PoolTable()
+            for i in range(4):
+                table = PoolTable(table_number=i+1)
                 db.session.add(table)
             db.session.commit()
 
