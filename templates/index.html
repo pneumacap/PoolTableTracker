@@ -4,7 +4,7 @@
 <div class="row mb-4">
     <div class="col">
         <h2>Pool Tables</h2>
-        <p class="text-muted">Rate: $30/hour</p>
+        <p class="text-muted">Rate: $30/hour (30-minute minimum)</p>
     </div>
 </div>
 
@@ -73,7 +73,9 @@
             <div class="modal-body">
                 <div class="text-center">
                     <h4>Session Complete</h4>
-                    <p class="mb-3">Total Time: <span id="summaryTime" class="fw-bold"></span></p>
+                    <p class="mb-3">Actual Duration: <span id="actualDuration" class="fw-bold"></span></p>
+                    <p class="text-warning mb-3 d-none" id="minimumTimeNotice"></p>
+                    <p class="mb-3">Total Time Charged: <span id="summaryTime" class="fw-bold"></span></p>
                     <p class="mb-3">Total Cost: $<span id="summaryCost" class="fw-bold"></span></p>
                 </div>
             </div>

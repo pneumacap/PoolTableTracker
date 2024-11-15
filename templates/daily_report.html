@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Daily Report</h2>
+            <p class="text-muted">{{ totals.date }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Sessions</h5>
+                    <p class="card-text display-4">{{ totals.total_sessions }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Time</h5>
+                    <p class="card-text display-4">{{ (totals.total_minutes / 60)|round(1) }} hrs</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Revenue</h5>
+                    <p class="card-text display-4">${{ "%.2f"|format(totals.total_revenue) }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col">
+            <form class="row g-3" method="GET">
+                <div class="col-auto">
+                    <input type="date" class="form-control" name="date" value="{{ totals.date }}" required>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">View Report</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

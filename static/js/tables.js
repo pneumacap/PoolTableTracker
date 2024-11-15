@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const RATE_PER_HOUR = 30;
+    const MINIMUM_MINUTES = 30;
     const tables = {};
     let startModal, summaryModal;
     let selectedTableId;
@@ -44,9 +45,21 @@ document.addEventListener('DOMContentLoaded', function() {
         startModal.show();
     }
 
-    function showSummaryModal(finalTime, finalCost) {
+    function showSummaryModal(finalTime, finalCost, actualDuration, minimumApplied) {
         document.getElementById('summaryTime').textContent = finalTime;
-        document.getElementById('summaryCost').textContent = finalCost;
+        document.getElementById('summaryCost').textContent = finalCost.toFixed(2);
+        
+        const minimumNotice = document.getElementById('minimumTimeNotice');
+        if (minimumApplied) {
+            minimumNotice.textContent = `Minimum ${MINIMUM_MINUTES} minutes charge applied`;
+            minimumNotice.classList.remove('d-none');
+        } else {
+            minimumNotice.classList.add('d-none');
+        }
+        
+        document.getElementById('actualDuration').textContent = 
+            `${Math.floor(actualDuration / 60)}h ${actualDuration % 60}m`;
+            
         summaryModal.show();
     }
 
@@ -74,11 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function stopSession(tableId) {
         const table = tables[tableId];
         const tableEl = table.element;
-        const finalTime = tableEl.querySelector('.timer').textContent;
-        const finalCost = tableEl.querySelector('.cost').textContent;
         
-        showSummaryModal(finalTime, finalCost);
-
         const response = await fetch(`/table/${tableId}/stop`, {
             method: 'POST'
         });
@@ -88,6 +97,17 @@ document.addEventListener('DOMContentLoaded', function() {
             clearInterval(table.timer);
             table.timer = null;
             table.startTime = null;
+            
+            const actualDuration = data.actual_duration;
+            const finalCost = data.final_cost;
+            const minimumApplied = data.minimum_applied;
+            
+            showSummaryModal(
+                formatDuration(actualDuration * 60),
+                finalCost,
+                actualDuration,
+                minimumApplied
+            );
         }
     }
 
@@ -130,18 +150,20 @@ document.addEventListener('DOMContentLoaded', function() {
         table.timer = setInterval(() => {
             const now = new Date();
             const elapsedTime = Math.max(0, now - table.startTime);
-            const totalSeconds = Math.floor(elapsedTime / 1000);
+            const elapsedMinutes = elapsedTime / (1000 * 60);
+            const actualMinutes = Math.max(MINIMUM_MINUTES, elapsedMinutes);
             
-            const hours = Math.floor(totalSeconds / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = totalSeconds % 60;
-
-            tableEl.querySelector('.timer').textContent = 
-                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-            const hoursFraction = elapsedTime / (1000 * 60 * 60);
-            const cost = Math.max(0, (hoursFraction * RATE_PER_HOUR)).toFixed(2);
-            tableEl.querySelector('.cost').textContent = cost;
+            tableEl.querySelector('.timer').textContent = formatDuration(elapsedTime / 1000);
+            
+            const cost = (actualMinutes / 60) * RATE_PER_HOUR;
+            tableEl.querySelector('.cost').textContent = cost.toFixed(2);
         }, 1000);
+    }
+    
+    function formatDuration(totalSeconds) {
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = Math.floor(totalSeconds % 60);
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     }
 });
