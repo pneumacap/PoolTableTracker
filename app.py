@@ -185,6 +185,7 @@ def stream():
         while True:
             try:
                 with app.app_context():
+                    config = models.BusinessConfig.query.first()
                     tables = models.PoolTable.query.all()
                     data = []
                     for table in tables:
@@ -199,8 +200,18 @@ def stream():
                             'start_time': session.start_time.isoformat() if session else None
                         })
                     
-                    json_data = json.dumps(data)
-                    yield f"data: {json_data}\n\n"
+                    response_data = {
+                        'tables': data,
+                        'rates': {
+                            'standard_rate': config.standard_rate if config else 30.0,
+                            'peak_rate': config.peak_rate if config else 45.0,
+                            'peak_start': config.peak_start_time.strftime('%H:%M') if config else '17:00',
+                            'peak_end': config.peak_end_time.strftime('%H:%M') if config else '22:00',
+                            'minimum_minutes': config.minimum_minutes if config else 30
+                        }
+                    }
+                    
+                    yield f"data: {json.dumps(response_data)}\n\n"
                     
                     db.session.remove()
                     time.sleep(2)

@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const RATE_PER_HOUR = 30;
-    const MINIMUM_MINUTES = 30;
+    let RATE_PER_HOUR = 30.0;
+    let PEAK_RATE = 45.0;
+    let PEAK_START = '17:00';
+    let PEAK_END = '22:00';
+    let MINIMUM_MINUTES = 30;
     const tables = {};
     let startModal, summaryModal;
     let selectedTableId;
@@ -34,9 +37,24 @@ document.addEventListener('DOMContentLoaded', function() {
     function initializeSSE() {
         const eventSource = new EventSource('/stream');
         eventSource.onmessage = function(event) {
-            const tablesData = JSON.parse(event.data);
-            updateTables(tablesData);
+            const data = JSON.parse(event.data);
+            updateTables(data.tables);
+            if (data.rates) {
+                updateRates(data.rates);
+            }
         };
+    }
+
+    function updateRates(rates) {
+        RATE_PER_HOUR = rates.standard_rate;
+        PEAK_RATE = rates.peak_rate;
+        PEAK_START = rates.peak_start;
+        PEAK_END = rates.peak_end;
+        MINIMUM_MINUTES = rates.minimum_minutes;
+        
+        // Update rate display
+        document.querySelector('.rate-display').textContent = 
+            `Rate: $${RATE_PER_HOUR}/hour (${MINIMUM_MINUTES}-minute minimum)`;
     }
 
     function showStartModal(tableId) {
@@ -138,6 +156,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Start or update timer if not already running
                 if (!table.timer && tableData.start_time) {
                     table.startTime = new Date(tableData.start_time);
+                    startTimer(tableData.id);
                 }
             }
         });
@@ -151,11 +170,18 @@ document.addEventListener('DOMContentLoaded', function() {
             const now = new Date();
             const elapsedTime = Math.max(0, now - table.startTime);
             const elapsedMinutes = elapsedTime / (1000 * 60);
+            
+            // Calculate rate based on time of day
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentTimeStr = `${String(currentHour).padStart(2, '0')}:${String(currentMinute).padStart(2, '0')}`;
+            const rate = (currentTimeStr >= PEAK_START && currentTimeStr <= PEAK_END) ? PEAK_RATE : RATE_PER_HOUR;
+            
             const actualMinutes = Math.max(MINIMUM_MINUTES, elapsedMinutes);
             
             tableEl.querySelector('.timer').textContent = formatDuration(elapsedTime / 1000);
             
-            const cost = (actualMinutes / 60) * RATE_PER_HOUR;
+            const cost = (actualMinutes / 60) * rate;
             tableEl.querySelector('.cost').textContent = cost.toFixed(2);
         }, 1000);
     }
