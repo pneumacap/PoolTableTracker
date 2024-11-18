@@ -1,36 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 140" fill="none" stroke="currentColor">
-    <!-- Main table outline with rounded corners -->
-    <rect x="20" y="20" width="160" height="100" rx="8" stroke-width="3"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" fill="none" stroke="currentColor">
+    <!-- Main table outline -->
+    <rect x="10" y="10" width="140" height="100" rx="6" stroke-width="2"/>
     
     <!-- Playing surface -->
-    <rect x="30" y="30" width="140" height="80" rx="4" stroke-width="2" stroke-dasharray="2"/>
+    <rect x="20" y="20" width="120" height="80" rx="3" stroke-width="1.5" stroke-dasharray="2"/>
     
     <!-- Corner pockets -->
-    <circle cx="20" cy="20" r="6" fill="currentColor" opacity="0.8"/>
-    <circle cx="180" cy="20" r="6" fill="currentColor" opacity="0.8"/>
-    <circle cx="20" cy="120" r="6" fill="currentColor" opacity="0.8"/>
-    <circle cx="180" cy="120" r="6" fill="currentColor" opacity="0.8"/>
+    <circle cx="10" cy="10" r="4" fill="currentColor" opacity="0.8"/>
+    <circle cx="150" cy="10" r="4" fill="currentColor" opacity="0.8"/>
+    <circle cx="10" cy="110" r="4" fill="currentColor" opacity="0.8"/>
+    <circle cx="150" cy="110" r="4" fill="currentColor" opacity="0.8"/>
     
     <!-- Side pockets -->
-    <circle cx="100" cy="17" r="5" fill="currentColor" opacity="0.8"/>
-    <circle cx="100" cy="123" r="5" fill="currentColor" opacity="0.8"/>
+    <circle cx="80" cy="8" r="3.5" fill="currentColor" opacity="0.8"/>
+    <circle cx="80" cy="112" r="3.5" fill="currentColor" opacity="0.8"/>
     
     <!-- Center spot -->
-    <circle cx="100" cy="70" r="2" fill="currentColor"/>
-    
-    <!-- Cushion lines -->
-    <path d="M30 40 L170 40" stroke-width="1.5" opacity="0.6"/>
-    <path d="M30 100 L170 100" stroke-width="1.5" opacity="0.6"/>
-    <path d="M40 30 L40 110" stroke-width="1.5" opacity="0.6"/>
-    <path d="M160 30 L160 110" stroke-width="1.5" opacity="0.6"/>
+    <circle cx="80" cy="60" r="1.5" fill="currentColor"/>
     
     <!-- Diamond sights -->
-    <circle cx="85" cy="30" r="1.5" fill="currentColor"/>
-    <circle cx="115" cy="30" r="1.5" fill="currentColor"/>
-    <circle cx="85" cy="110" r="1.5" fill="currentColor"/>
-    <circle cx="115" cy="110" r="1.5" fill="currentColor"/>
-    <circle cx="30" cy="55" r="1.5" fill="currentColor"/>
-    <circle cx="30" cy="85" r="1.5" fill="currentColor"/>
-    <circle cx="170" cy="55" r="1.5" fill="currentColor"/>
-    <circle cx="170" cy="85" r="1.5" fill="currentColor"/>
+    <circle cx="65" cy="20" r="1" fill="currentColor"/>
+    <circle cx="95" cy="20" r="1" fill="currentColor"/>
+    <circle cx="65" cy="100" r="1" fill="currentColor"/>
+    <circle cx="95" cy="100" r="1" fill="currentColor"/>
+    <circle cx="20" cy="45" r="1" fill="currentColor"/>
+    <circle cx="20" cy="75" r="1" fill="currentColor"/>
+    <circle cx="140" cy="45" r="1" fill="currentColor"/>
+    <circle cx="140" cy="75" r="1" fill="currentColor"/>
 </svg>

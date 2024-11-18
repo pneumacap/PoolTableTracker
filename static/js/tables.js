@@ -19,7 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
             tables[tableId] = {
                 element: tableEl,
                 timer: null,
-                startTime: null
+                startTime: null,
+                lastRateCheck: null,
+                isPeakRate: false
             };
 
             // Add event listeners
@@ -35,7 +37,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const confirmStartBtn = document.getElementById('confirmStart');
         confirmStartBtn.addEventListener('click', startSession);
         
-        // Add enter key support for the customer name input
         document.getElementById('customerName').addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && e.target.value.trim()) {
                 e.preventDefault();
@@ -45,18 +46,24 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function initializeSSE() {
-        const eventSource = new EventSource('/stream');
-        eventSource.onmessage = function(event) {
-            const data = JSON.parse(event.data);
-            updateTables(data.tables);
-            if (data.rates) {
-                updateRates(data.rates);
-            }
+        const connectSSE = () => {
+            const eventSource = new EventSource('/stream');
+            eventSource.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                updateTables(data.tables);
+                if (data.rates) {
+                    updateRates(data.rates);
+                }
+            };
+            
+            eventSource.onerror = function() {
+                console.log('SSE connection error. Reconnecting...');
+                eventSource.close();
+                setTimeout(connectSSE, 5000);
+            };
         };
         
-        eventSource.onerror = function() {
-            console.log('SSE connection error. Reconnecting...');
-        };
+        connectSSE();
     }
 
     function updateRates(rates) {
@@ -76,6 +83,81 @@ document.addEventListener('DOMContentLoaded', function() {
         customerNameInput.value = '';
         startModal.show();
         setTimeout(() => customerNameInput.focus(), 400);
+    }
+
+    function isInPeakHours(time) {
+        const timeStr = time.getHours().toString().padStart(2, '0') + ':' + 
+                       time.getMinutes().toString().padStart(2, '0');
+        return timeStr >= PEAK_START && timeStr <= PEAK_END;
+    }
+
+    function calculateCost(startTime, currentTime) {
+        const elapsedMs = Math.max(0, currentTime - startTime);
+        let elapsedMinutes = elapsedMs / (1000 * 60);
+        
+        // Apply minimum time charge
+        const actualMinutes = Math.max(MINIMUM_MINUTES, elapsedMinutes);
+        
+        // Calculate cost considering peak/off-peak transitions
+        const startHour = startTime.getHours();
+        const currentHour = currentTime.getHours();
+        let totalCost = 0;
+        
+        // If the session spans across different rate periods
+        if (startHour !== currentHour) {
+            for (let hour = startHour; hour <= currentHour; hour++) {
+                const checkTime = new Date(startTime);
+                checkTime.setHours(hour);
+                const rate = isInPeakHours(checkTime) ? PEAK_RATE : RATE_PER_HOUR;
+                
+                // Calculate minutes in this hour
+                let minutesInHour;
+                if (hour === startHour) {
+                    minutesInHour = 60 - startTime.getMinutes();
+                } else if (hour === currentHour) {
+                    minutesInHour = currentTime.getMinutes();
+                } else {
+                    minutesInHour = 60;
+                }
+                
+                totalCost += (minutesInHour / 60) * rate;
+            }
+        } else {
+            // Session within same hour
+            const rate = isInPeakHours(currentTime) ? PEAK_RATE : RATE_PER_HOUR;
+            totalCost = (actualMinutes / 60) * rate;
+        }
+        
+        return {
+            cost: totalCost,
+            actualMinutes: actualMinutes,
+            isPeakTime: isInPeakHours(currentTime)
+        };
+    }
+
+    function startTimer(tableId) {
+        const table = tables[tableId];
+        const tableEl = table.element;
+        
+        table.timer = setInterval(() => {
+            const now = new Date();
+            const result = calculateCost(table.startTime, now);
+            
+            const timerElement = tableEl.querySelector('.timer');
+            const elapsedTime = now - table.startTime;
+            timerElement.textContent = formatDuration(elapsedTime / 1000);
+            
+            const costElement = tableEl.querySelector('.cost');
+            costElement.textContent = result.cost.toFixed(2);
+            
+            // Update peak time indicator
+            costElement.classList.toggle('text-warning', result.isPeakTime);
+            costElement.title = result.isPeakTime ? 'Peak hour rate applied' : 'Standard rate applied';
+            
+            // Store last rate check
+            table.lastRateCheck = now;
+            table.isPeakRate = result.isPeakTime;
+        }, 1000);
     }
 
     function showSummaryModal(finalTime, finalCost, actualDuration, minimumApplied) {
@@ -120,6 +202,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 startModal.hide();
                 const table = tables[selectedTableId];
                 table.startTime = new Date();
+                table.lastRateCheck = new Date();
+                table.isPeakRate = isInPeakHours(table.startTime);
                 startTimer(selectedTableId);
             } else {
                 alert(data.message || 'Failed to start session');
@@ -151,6 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 clearInterval(table.timer);
                 table.timer = null;
                 table.startTime = null;
+                table.lastRateCheck = null;
                 
                 showSummaryModal(
                     formatDuration(data.actual_duration * 60),
@@ -178,11 +263,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const tableEl = table.element;
             const isOccupied = tableData.is_occupied;
 
-            // Update status with smooth transition
             tableEl.dataset.status = isOccupied ? 'occupied' : 'available';
             tableEl.querySelector('.status-text').textContent = isOccupied ? 'Occupied' : 'Available';
 
-            // Update customer info visibility
             const customerInfo = tableEl.querySelector('.customer-info');
             if (isOccupied) {
                 customerInfo.classList.remove('d-none');
@@ -192,56 +275,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(() => customerInfo.classList.add('d-none'), 300);
             }
 
-            // Update buttons
             tableEl.querySelector('.btn-start').classList.toggle('d-none', isOccupied);
             tableEl.querySelector('.btn-stop').classList.toggle('d-none', !isOccupied);
 
             if (isOccupied) {
-                // Update customer name
                 tableEl.querySelector('.customer-name').textContent = tableData.customer_name;
 
-                // Start or update timer if not already running
                 if (!table.timer && tableData.start_time) {
                     table.startTime = new Date(tableData.start_time);
+                    table.lastRateCheck = new Date();
+                    table.isPeakRate = isInPeakHours(table.startTime);
                     startTimer(tableData.id);
                 }
             }
         });
-    }
-
-    function startTimer(tableId) {
-        const table = tables[tableId];
-        const tableEl = table.element;
-
-        table.timer = setInterval(() => {
-            const now = new Date();
-            const elapsedTime = Math.max(0, now - table.startTime);
-            const elapsedMinutes = elapsedTime / (1000 * 60);
-            
-            // Calculate rate based on time of day
-            const currentHour = now.getHours();
-            const currentMinute = now.getMinutes();
-            const currentTimeStr = `${String(currentHour).padStart(2, '0')}:${String(currentMinute).padStart(2, '0')}`;
-            const rate = (currentTimeStr >= PEAK_START && currentTimeStr <= PEAK_END) ? PEAK_RATE : RATE_PER_HOUR;
-            
-            const actualMinutes = Math.max(MINIMUM_MINUTES, elapsedMinutes);
-            
-            const timerElement = tableEl.querySelector('.timer');
-            timerElement.textContent = formatDuration(elapsedTime / 1000);
-            
-            const cost = (actualMinutes / 60) * rate;
-            const costElement = tableEl.querySelector('.cost');
-            costElement.textContent = cost.toFixed(2);
-            
-            // Add peak time visual indicator
-            const isPeakTime = currentTimeStr >= PEAK_START && currentTimeStr <= PEAK_END;
-            costElement.classList.toggle('text-warning', isPeakTime);
-            if (isPeakTime) {
-                costElement.title = 'Peak hour rate applied';
-            } else {
-                costElement.title = 'Standard rate applied';
-            }
-        }, 1000);
     }
     
     function formatDuration(totalSeconds) {

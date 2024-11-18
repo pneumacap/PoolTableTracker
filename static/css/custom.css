@@ -1,69 +1,70 @@
 /* Theme-aware variables */
 :root[data-bs-theme=light] {
-    --card-border-color: rgba(0, 0, 0, 0.175);
-    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    --card-hover-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
-    --status-bg: rgba(0, 0, 0, 0.05);
-    --customer-info-bg: rgba(0, 0, 0, 0.03);
+    --card-border-color: transparent;
+    --card-bg: rgba(0, 0, 0, 0.02);
+    --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --card-hover-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --status-bg: rgba(0, 0, 0, 0.03);
+    --customer-info-bg: rgba(0, 0, 0, 0.02);
+    --text-secondary: rgba(0, 0, 0, 0.6);
 }
 
 :root[data-bs-theme=dark] {
-    --card-border-color: rgba(255, 255, 255, 0.175);
-    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    --card-hover-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
-    --status-bg: rgba(255, 255, 255, 0.05);
-    --customer-info-bg: rgba(255, 255, 255, 0.03);
+    --card-border-color: transparent;
+    --card-bg: rgba(255, 255, 255, 0.03);
+    --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    --card-hover-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    --status-bg: rgba(255, 255, 255, 0.03);
+    --customer-info-bg: rgba(255, 255, 255, 0.02);
+    --text-secondary: rgba(255, 255, 255, 0.6);
 }
 
 /* Card Styles */
 .card {
     transition: all 0.3s ease-in-out;
     position: relative;
-    border-width: 2px;
-    border-color: var(--card-border-color);
+    border: none;
+    background-color: var(--card-bg);
     box-shadow: var(--card-shadow);
-    padding: 1.5rem;
+    padding: 1rem;
 }
 
 .card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     box-shadow: var(--card-hover-shadow);
 }
 
 /* Table Icon */
 .table-icon {
-    width: 140px;
-    height: 140px;
+    width: 120px;
+    height: 120px;
     transition: transform 0.3s ease;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
 }
 
 [data-status="occupied"] .table-icon {
-    transform: scale(1.05);
+    transform: scale(1.02);
 }
 
 /* Status Styles */
 .status-indicator {
     display: inline-block;
-    width: 12px;
-    height: 12px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    margin-right: 8px;
+    margin-right: 6px;
     position: relative;
+    opacity: 0.8;
 }
 
 [data-status="available"] .status-indicator {
     background-color: var(--bs-success);
-    box-shadow: 0 0 8px var(--bs-success);
+    box-shadow: 0 0 4px var(--bs-success);
 }
 
 [data-status="occupied"] .status-indicator {
     background-color: var(--bs-danger);
-    box-shadow: 0 0 8px var(--bs-danger);
-}
-
-[data-status="occupied"] {
-    border-color: var(--bs-danger);
+    box-shadow: 0 0 4px var(--bs-danger);
 }
 
 /* Table Status */
@@ -71,17 +72,18 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 1.25rem 0;
-    padding: 0.75rem;
-    border-radius: 20px;
+    margin: 0.75rem 0;
+    padding: 0.5rem;
+    border-radius: 16px;
     background-color: var(--status-bg);
-    font-size: 1.1rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
 }
 
 /* Timer Display */
 .timer {
     font-family: 'Courier New', monospace;
-    font-size: 1.5em;
+    font-size: 1.3em;
     font-weight: bold;
     color: var(--bs-primary);
 }
@@ -89,9 +91,9 @@
 /* Customer Info */
 .customer-info {
     text-align: center;
-    margin: 1.25rem 0;
-    padding: 1.25rem;
-    border-radius: 12px;
+    margin: 0.75rem 0;
+    padding: 0.75rem;
+    border-radius: 8px;
     background-color: var(--customer-info-bg);
     opacity: 0;
     transform: translateY(10px);
@@ -103,91 +105,85 @@
     transform: translateY(0);
 }
 
-/* Loading States */
-.loading {
-    position: relative;
-    pointer-events: none;
+.customer-info h6 {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
 }
 
-.loading::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: inherit;
+/* Table Controls */
+.table-controls {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
 }
 
-.loading::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 24px;
-    height: 24px;
-    border: 3px solid var(--bs-primary);
-    border-top-color: transparent;
-    border-radius: 50%;
-    z-index: 1;
-    animation: spin 0.8s linear infinite;
+.table-controls .btn {
+    padding: 0.5rem;
+    font-size: 0.95rem;
 }
 
 /* Cost Display */
 .cost {
-    font-size: 1.4em;
+    font-size: 1.2em;
     font-weight: bold;
     color: var(--bs-warning);
-}
-
-/* Animations */
-@keyframes spin {
-    to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 /* Rate Display */
 .rate-display {
     text-align: center;
-    padding: 1rem;
+    padding: 0.75rem;
     background-color: var(--status-bg);
-    border-radius: 12px;
-    margin-bottom: 2rem;
-    font-size: 1.1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+/* Loading States */
+.loading::after {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.loading::before {
+    border-width: 2px;
 }
 
 /* Modal Enhancements */
 .modal-content {
-    border-radius: 12px;
+    border-radius: 8px;
     border: none;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--card-shadow);
 }
 
 .modal-header {
-    border-bottom: 2px solid var(--card-border-color);
-    padding: 1.5rem;
+    border-bottom: 1px solid var(--card-border-color);
+    padding: 1rem;
 }
 
 .modal-footer {
-    border-top: 2px solid var(--card-border-color);
-    padding: 1.5rem;
+    border-top: 1px solid var(--card-border-color);
+    padding: 1rem;
 }
 
 /* Theme Toggle Button */
 #themeToggle {
-    padding: 0.5rem;
+    padding: 0.4rem;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 #themeToggle i {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+}
+
+/* Animations */
+@keyframes spin {
+    to { transform: translate(-50%, -50%) rotate(360deg); }
 }
