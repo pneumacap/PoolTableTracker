@@ -1,32 +1,67 @@
 /* Theme-aware variables */
 :root[data-bs-theme=light] {
-    --body-bg: #ffffff;
-    --card-bg: #f8f9fa;
+    --body-bg: #f8f9fa;
+    --card-bg: #ffffff;
     --nav-bg: #ffffff;
-    --border-color: #dee2e6;
+    --border-color: #e9ecef;
     --text-color: #212529;
-    --text-secondary: #6c757d;
+    --text-secondary: #495057;
     --input-bg: #ffffff;
     --input-color: #212529;
+    --link-color: #0d6efd;
+    --link-hover: #0a58ca;
+    --card-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    --card-hover-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 :root[data-bs-theme=dark] {
-    --body-bg: #212529;
-    --card-bg: #2c3034;
-    --nav-bg: #1a1d20;
-    --border-color: #495057;
-    --text-color: #e9ecef;
-    --text-secondary: #adb5bd;
-    --input-bg: #ffffff;
-    --input-color: #212529;
+    --body-bg: #18191a;
+    --card-bg: #242526;
+    --nav-bg: #242526;
+    --border-color: #2d2e2f;
+    --text-color: #e4e6eb;
+    --text-secondary: #b0b3b8;
+    --input-bg: #3a3b3c;
+    --input-color: #e4e6eb;
+    --link-color: #4993dd;
+    --link-hover: #64a6e8;
+    --card-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    --card-hover-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+/* Navbar and Brand Styles */
+.navbar-brand {
+    color: var(--text-color) !important;
+}
+
+.nav-link {
+    color: var(--text-secondary) !important;
+}
+
+.nav-link:hover, .nav-link:focus {
+    color: var(--link-color) !important;
+}
+
+.dropdown-menu {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+.dropdown-item {
+    color: var(--text-color);
+}
+
+.dropdown-item:hover {
+    background-color: var(--nav-bg);
+    color: var(--link-color);
 }
 
 /* Card Styles */
 .card {
     transition: all 0.3s ease-in-out;
     position: relative;
-    border: 1px solid var(--border-color);
     background-color: var(--card-bg);
+    border-color: var(--border-color);
     box-shadow: var(--card-shadow);
     padding: 1rem;
 }
@@ -77,9 +112,12 @@
     margin: 0.75rem 0;
     padding: 0.5rem;
     border-radius: 16px;
-    background-color: var(--nav-bg);
-    font-size: 0.95rem;
-    color: var(--text-secondary);
+    background-color: rgba(0,0,0,0.05);
+    color: var(--text-color);
+}
+
+[data-bs-theme="dark"] .table-status {
+    background-color: rgba(255,255,255,0.05);
 }
 
 /* Timer Display */
@@ -87,7 +125,7 @@
     font-family: 'Courier New', monospace;
     font-size: 1.3em;
     font-weight: bold;
-    color: var(--bs-primary);
+    color: var(--link-color);
 }
 
 /* Customer Info */
@@ -96,7 +134,8 @@
     margin: 0.75rem 0;
     padding: 0.75rem;
     border-radius: 8px;
-    background-color: var(--nav-bg);
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
     opacity: 0;
     transform: translateY(10px);
     transition: all 0.3s ease;
@@ -115,19 +154,20 @@
 
 /* Form Input Styling */
 .form-control {
-    background-color: var(--input-bg) !important;
-    color: var(--input-color) !important;
-    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--input-color);
+    border-color: var(--border-color);
 }
 
 .form-control:focus {
-    background-color: var(--input-bg) !important;
-    color: var(--input-color) !important;
+    background-color: var(--input-bg);
+    color: var(--input-color);
+    border-color: var(--link-color);
 }
 
 /* Customer info text */
 .customer-name {
-    color: var(--text-color) !important;
+    color: var(--text-color);
 }
 
 /* Modal text */
@@ -163,11 +203,12 @@
 .rate-display {
     text-align: center;
     padding: 0.75rem;
-    background-color: var(--nav-bg);
+    color: var(--text-color);
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     margin-bottom: 1.5rem;
     font-size: 0.95rem;
-    color: var(--text-secondary);
 }
 
 /* Loading States */
@@ -182,19 +223,12 @@
 /* Modal Enhancements */
 .modal-content {
     border-radius: 8px;
-    border: 1px solid var(--border-color);
     background-color: var(--card-bg);
-    color: var(--text-color);
+    border-color: var(--border-color);
 }
 
-.modal-header {
-    border-bottom: 1px solid var(--border-color);
-    padding: 1rem;
-}
-
-.modal-footer {
-    border-top: 1px solid var(--border-color);
-    padding: 1rem;
+.modal-header, .modal-footer {
+    border-color: var(--border-color);
 }
 
 /* Theme Toggle Button */
