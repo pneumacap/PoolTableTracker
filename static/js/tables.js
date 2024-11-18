@@ -31,7 +31,17 @@ document.addEventListener('DOMContentLoaded', function() {
     function initializeModals() {
         startModal = new bootstrap.Modal(document.getElementById('startSessionModal'));
         summaryModal = new bootstrap.Modal(document.getElementById('sessionSummaryModal'));
-        document.getElementById('confirmStart').addEventListener('click', startSession);
+        
+        const confirmStartBtn = document.getElementById('confirmStart');
+        confirmStartBtn.addEventListener('click', startSession);
+        
+        // Add enter key support for the customer name input
+        document.getElementById('customerName').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && e.target.value.trim()) {
+                e.preventDefault();
+                startSession();
+            }
+        });
     }
 
     function initializeSSE() {
@@ -43,6 +53,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateRates(data.rates);
             }
         };
+        
+        eventSource.onerror = function() {
+            console.log('SSE connection error. Reconnecting...');
+        };
     }
 
     function updateRates(rates) {
@@ -52,15 +66,16 @@ document.addEventListener('DOMContentLoaded', function() {
         PEAK_END = rates.peak_end;
         MINIMUM_MINUTES = rates.minimum_minutes;
         
-        // Update rate display
-        document.querySelector('.rate-display').textContent = 
-            `Rate: $${RATE_PER_HOUR}/hour (${MINIMUM_MINUTES}-minute minimum)`;
+        const rateDisplay = document.querySelector('.rate-display');
+        rateDisplay.innerHTML = `Standard Rate: $${RATE_PER_HOUR}/hour <span class="text-warning ms-2">Peak Rate: $${PEAK_RATE}/hour (${PEAK_START}-${PEAK_END})</span>`;
     }
 
     function showStartModal(tableId) {
         selectedTableId = tableId;
-        document.getElementById('customerName').value = '';
+        const customerNameInput = document.getElementById('customerName');
+        customerNameInput.value = '';
         startModal.show();
+        setTimeout(() => customerNameInput.focus(), 400);
     }
 
     function showSummaryModal(finalTime, finalCost, actualDuration, minimumApplied) {
@@ -82,50 +97,76 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function startSession() {
-        const customerName = document.getElementById('customerName').value;
+        const customerName = document.getElementById('customerName').value.trim();
         if (!customerName) return;
 
-        const response = await fetch(`/table/${selectedTableId}/start`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `customer_name=${encodeURIComponent(customerName)}`
-        });
+        const tableEl = tables[selectedTableId].element;
+        const startButton = tableEl.querySelector('.btn-start');
+        
+        try {
+            startButton.classList.add('loading');
+            tableEl.classList.add('loading');
 
-        const data = await response.json();
-        if (data.status === 'success') {
-            startModal.hide();
-            const table = tables[selectedTableId];
-            table.startTime = new Date();
-            startTimer(selectedTableId);
+            const response = await fetch(`/table/${selectedTableId}/start`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `customer_name=${encodeURIComponent(customerName)}`
+            });
+
+            const data = await response.json();
+            if (data.status === 'success') {
+                startModal.hide();
+                const table = tables[selectedTableId];
+                table.startTime = new Date();
+                startTimer(selectedTableId);
+            } else {
+                alert(data.message || 'Failed to start session');
+            }
+        } catch (error) {
+            console.error('Error starting session:', error);
+            alert('Failed to start session. Please try again.');
+        } finally {
+            startButton.classList.remove('loading');
+            tableEl.classList.remove('loading');
         }
     }
 
     async function stopSession(tableId) {
         const table = tables[tableId];
         const tableEl = table.element;
+        const stopButton = tableEl.querySelector('.btn-stop');
         
-        const response = await fetch(`/table/${tableId}/stop`, {
-            method: 'POST'
-        });
-        
-        const data = await response.json();
-        if (data.status === 'success') {
-            clearInterval(table.timer);
-            table.timer = null;
-            table.startTime = null;
+        try {
+            stopButton.classList.add('loading');
+            tableEl.classList.add('loading');
             
-            const actualDuration = data.actual_duration;
-            const finalCost = data.final_cost;
-            const minimumApplied = data.minimum_applied;
+            const response = await fetch(`/table/${tableId}/stop`, {
+                method: 'POST'
+            });
             
-            showSummaryModal(
-                formatDuration(actualDuration * 60),
-                finalCost,
-                actualDuration,
-                minimumApplied
-            );
+            const data = await response.json();
+            if (data.status === 'success') {
+                clearInterval(table.timer);
+                table.timer = null;
+                table.startTime = null;
+                
+                showSummaryModal(
+                    formatDuration(data.actual_duration * 60),
+                    data.final_cost,
+                    data.actual_duration,
+                    data.minimum_applied
+                );
+            } else {
+                alert(data.message || 'Failed to stop session');
+            }
+        } catch (error) {
+            console.error('Error stopping session:', error);
+            alert('Failed to stop session. Please try again.');
+        } finally {
+            stopButton.classList.remove('loading');
+            tableEl.classList.remove('loading');
         }
     }
 
@@ -137,13 +178,19 @@ document.addEventListener('DOMContentLoaded', function() {
             const tableEl = table.element;
             const isOccupied = tableData.is_occupied;
 
-            // Update status
+            // Update status with smooth transition
             tableEl.dataset.status = isOccupied ? 'occupied' : 'available';
             tableEl.querySelector('.status-text').textContent = isOccupied ? 'Occupied' : 'Available';
 
             // Update customer info visibility
             const customerInfo = tableEl.querySelector('.customer-info');
-            customerInfo.classList.toggle('d-none', !isOccupied);
+            if (isOccupied) {
+                customerInfo.classList.remove('d-none');
+                setTimeout(() => customerInfo.style.opacity = '1', 50);
+            } else {
+                customerInfo.style.opacity = '0';
+                setTimeout(() => customerInfo.classList.add('d-none'), 300);
+            }
 
             // Update buttons
             tableEl.querySelector('.btn-start').classList.toggle('d-none', isOccupied);
@@ -179,10 +226,21 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const actualMinutes = Math.max(MINIMUM_MINUTES, elapsedMinutes);
             
-            tableEl.querySelector('.timer').textContent = formatDuration(elapsedTime / 1000);
+            const timerElement = tableEl.querySelector('.timer');
+            timerElement.textContent = formatDuration(elapsedTime / 1000);
             
             const cost = (actualMinutes / 60) * rate;
-            tableEl.querySelector('.cost').textContent = cost.toFixed(2);
+            const costElement = tableEl.querySelector('.cost');
+            costElement.textContent = cost.toFixed(2);
+            
+            // Add peak time visual indicator
+            const isPeakTime = currentTimeStr >= PEAK_START && currentTimeStr <= PEAK_END;
+            costElement.classList.toggle('text-warning', isPeakTime);
+            if (isPeakTime) {
+                costElement.title = 'Peak hour rate applied';
+            } else {
+                costElement.title = 'Standard rate applied';
+            }
         }, 1000);
     }
     

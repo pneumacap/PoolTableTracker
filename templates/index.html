@@ -2,9 +2,9 @@
 
 {% block content %}
 <div class="row mb-4">
-    <div class="col">
-        <h2>Pool Tables</h2>
-        <p class="text-muted rate-display">Rate: $30/hour (30-minute minimum)</p>
+    <div class="col text-center">
+        <h2 class="mb-3">Pool Tables</h2>
+        <p class="rate-display">Standard Rate: $30/hour <span class="text-warning ms-2">Peak Rate: $45/hour (17:00-22:00)</span></p>
     </div>
 </div>
 
@@ -18,17 +18,31 @@
                 <div class="text-center mb-3">
                     <img src="/static/images/pool-table.svg" alt="Pool Table" class="table-icon">
                 </div>
-                <h5 class="card-title text-center">Table {{ table.table_number }}</h5>
-                <div class="table-status mb-2">
+                <h5 class="card-title text-center mb-3">Table {{ table.table_number }}</h5>
+                
+                <div class="table-status">
                     <span class="status-indicator"></span>
-                    <span class="status-text">Available</span>
+                    <span class="status-text fw-bold">{{ 'Occupied' if table.is_occupied else 'Available' }}</span>
                 </div>
+                
                 <div class="customer-info d-none">
-                    <p class="mb-2">Customer: <span class="customer-name"></span></p>
-                    <p class="mb-2">Time: <span class="timer">00:00:00</span></p>
-                    <p class="mb-2">Cost: $<span class="cost">0.00</span></p>
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <h6 class="mb-1">Customer</h6>
+                            <p class="customer-name mb-0 fs-5"></p>
+                        </div>
+                        <div class="col-6">
+                            <h6 class="mb-1">Time</h6>
+                            <p class="timer mb-0"></p>
+                        </div>
+                        <div class="col-6">
+                            <h6 class="mb-1">Cost</h6>
+                            <p class="mb-0">$<span class="cost">0.00</span></p>
+                        </div>
+                    </div>
                 </div>
-                <div class="table-controls">
+                
+                <div class="table-controls mt-3">
                     <button class="btn btn-success btn-start w-100 mb-2">Start Session</button>
                     <button class="btn btn-danger btn-stop w-100 d-none">End Session</button>
                 </div>
@@ -50,13 +64,14 @@
                 <form id="startSessionForm">
                     <div class="mb-3">
                         <label for="customerName" class="form-label">Customer Name</label>
-                        <input type="text" class="form-control" id="customerName" required>
+                        <input type="text" class="form-control form-control-lg" id="customerName" required 
+                               placeholder="Enter customer name" autocomplete="off">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="confirmStart">Start Session</button>
+                <button type="button" class="btn btn-primary btn-lg" id="confirmStart">Start Session</button>
             </div>
         </div>
     </div>
@@ -72,15 +87,31 @@
             </div>
             <div class="modal-body">
                 <div class="text-center">
-                    <h4>Session Complete</h4>
-                    <p class="mb-3">Actual Duration: <span id="actualDuration" class="fw-bold"></span></p>
+                    <div class="mb-4">
+                        <span class="display-1 text-success">✓</span>
+                        <h4 class="mt-3">Session Complete</h4>
+                    </div>
+                    <div class="card bg-dark mb-3">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6 border-end">
+                                    <p class="text-muted mb-1">Actual Duration</p>
+                                    <p class="fs-5 mb-0" id="actualDuration"></p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="text-muted mb-1">Time Charged</p>
+                                    <p class="fs-5 mb-0" id="summaryTime"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <p class="text-warning mb-3 d-none" id="minimumTimeNotice"></p>
-                    <p class="mb-3">Total Time Charged: <span id="summaryTime" class="fw-bold"></span></p>
-                    <p class="mb-3">Total Cost: $<span id="summaryCost" class="fw-bold"></span></p>
+                    <h3 class="mb-0">Total Cost</h3>
+                    <p class="display-4 mb-0">$<span id="summaryCost" class="fw-bold"></span></p>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary btn-lg" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
