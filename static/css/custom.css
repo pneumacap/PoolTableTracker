@@ -36,10 +36,10 @@
 
 /* Table Icon */
 .table-icon {
-    width: 120px;
+    width: 160px;
     height: 120px;
     transition: transform 0.3s ease;
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 [data-status="occupied"] .table-icon {
