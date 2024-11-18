@@ -6,6 +6,8 @@
     --border-color: #dee2e6;
     --text-color: #212529;
     --text-secondary: #6c757d;
+    --input-bg: #ffffff;
+    --input-color: #212529;
 }
 
 :root[data-bs-theme=dark] {
@@ -13,8 +15,10 @@
     --card-bg: #2c3034;
     --nav-bg: #1a1d20;
     --border-color: #495057;
-    --text-color: #f8f9fa;
+    --text-color: #e9ecef;
     --text-secondary: #adb5bd;
+    --input-bg: #ffffff;
+    --input-color: #212529;
 }
 
 /* Card Styles */
@@ -107,6 +111,32 @@
     font-size: 0.85rem;
     color: var(--text-secondary);
     margin-bottom: 0.25rem;
+}
+
+/* Form Input Styling */
+.form-control {
+    background-color: var(--input-bg) !important;
+    color: var(--input-color) !important;
+    border: 1px solid var(--border-color);
+}
+
+.form-control:focus {
+    background-color: var(--input-bg) !important;
+    color: var(--input-color) !important;
+}
+
+/* Customer info text */
+.customer-name {
+    color: var(--text-color) !important;
+}
+
+/* Modal text */
+.modal-title, .modal-body {
+    color: var(--text-color);
+}
+
+.modal-body label {
+    color: var(--text-color);
 }
 
 /* Table Controls */
