@@ -1,21 +1,41 @@
+/* Theme-aware variables */
+:root[data-bs-theme=light] {
+    --card-border-color: rgba(0, 0, 0, 0.175);
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --card-hover-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    --status-bg: rgba(0, 0, 0, 0.05);
+    --customer-info-bg: rgba(0, 0, 0, 0.03);
+}
+
+:root[data-bs-theme=dark] {
+    --card-border-color: rgba(255, 255, 255, 0.175);
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    --card-hover-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+    --status-bg: rgba(255, 255, 255, 0.05);
+    --customer-info-bg: rgba(255, 255, 255, 0.03);
+}
+
 /* Card Styles */
 .card {
     transition: all 0.3s ease-in-out;
     position: relative;
     border-width: 2px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-color: var(--card-border-color);
+    box-shadow: var(--card-shadow);
+    padding: 1.5rem;
 }
 
 .card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--card-hover-shadow);
 }
 
 /* Table Icon */
 .table-icon {
-    width: 120px;
-    height: 120px;
+    width: 140px;
+    height: 140px;
     transition: transform 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 [data-status="occupied"] .table-icon {
@@ -51,16 +71,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 1rem 0;
-    padding: 0.5rem;
+    margin: 1.25rem 0;
+    padding: 0.75rem;
     border-radius: 20px;
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: var(--status-bg);
+    font-size: 1.1rem;
 }
 
 /* Timer Display */
 .timer {
     font-family: 'Courier New', monospace;
-    font-size: 1.4em;
+    font-size: 1.5em;
     font-weight: bold;
     color: var(--bs-primary);
 }
@@ -68,10 +89,10 @@
 /* Customer Info */
 .customer-info {
     text-align: center;
-    margin: 1rem 0;
-    padding: 1rem;
-    border-radius: 8px;
-    background-color: rgba(0, 0, 0, 0.05);
+    margin: 1.25rem 0;
+    padding: 1.25rem;
+    border-radius: 12px;
+    background-color: var(--customer-info-bg);
     opacity: 0;
     transform: translateY(10px);
     transition: all 0.3s ease;
@@ -119,7 +140,7 @@
 
 /* Cost Display */
 .cost {
-    font-size: 1.2em;
+    font-size: 1.4em;
     font-weight: bold;
     color: var(--bs-warning);
 }
@@ -132,10 +153,11 @@
 /* Rate Display */
 .rate-display {
     text-align: center;
-    padding: 0.5rem;
-    background-color: rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+    padding: 1rem;
+    background-color: var(--status-bg);
+    border-radius: 12px;
     margin-bottom: 2rem;
+    font-size: 1.1rem;
 }
 
 /* Modal Enhancements */
@@ -146,9 +168,26 @@
 }
 
 .modal-header {
-    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 2px solid var(--card-border-color);
+    padding: 1.5rem;
 }
 
 .modal-footer {
-    border-top: 2px solid rgba(255, 255, 255, 0.1);
+    border-top: 2px solid var(--card-border-color);
+    padding: 1.5rem;
+}
+
+/* Theme Toggle Button */
+#themeToggle {
+    padding: 0.5rem;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#themeToggle i {
+    font-size: 1.2rem;
 }
