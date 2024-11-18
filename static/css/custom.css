@@ -1,29 +1,27 @@
 /* Theme-aware variables */
 :root[data-bs-theme=light] {
-    --card-border-color: transparent;
-    --card-bg: rgba(0, 0, 0, 0.02);
-    --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    --card-hover-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    --status-bg: rgba(0, 0, 0, 0.03);
-    --customer-info-bg: rgba(0, 0, 0, 0.02);
-    --text-secondary: rgba(0, 0, 0, 0.6);
+    --body-bg: #ffffff;
+    --card-bg: #f8f9fa;
+    --nav-bg: #ffffff;
+    --border-color: #dee2e6;
+    --text-color: #212529;
+    --text-secondary: #6c757d;
 }
 
 :root[data-bs-theme=dark] {
-    --card-border-color: transparent;
-    --card-bg: rgba(255, 255, 255, 0.03);
-    --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    --card-hover-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    --status-bg: rgba(255, 255, 255, 0.03);
-    --customer-info-bg: rgba(255, 255, 255, 0.02);
-    --text-secondary: rgba(255, 255, 255, 0.6);
+    --body-bg: #212529;
+    --card-bg: #2c3034;
+    --nav-bg: #1a1d20;
+    --border-color: #495057;
+    --text-color: #f8f9fa;
+    --text-secondary: #adb5bd;
 }
 
 /* Card Styles */
 .card {
     transition: all 0.3s ease-in-out;
     position: relative;
-    border: none;
+    border: 1px solid var(--border-color);
     background-color: var(--card-bg);
     box-shadow: var(--card-shadow);
     padding: 1rem;
@@ -75,7 +73,7 @@
     margin: 0.75rem 0;
     padding: 0.5rem;
     border-radius: 16px;
-    background-color: var(--status-bg);
+    background-color: var(--nav-bg);
     font-size: 0.95rem;
     color: var(--text-secondary);
 }
@@ -94,7 +92,7 @@
     margin: 0.75rem 0;
     padding: 0.75rem;
     border-radius: 8px;
-    background-color: var(--customer-info-bg);
+    background-color: var(--nav-bg);
     opacity: 0;
     transform: translateY(10px);
     transition: all 0.3s ease;
@@ -135,7 +133,7 @@
 .rate-display {
     text-align: center;
     padding: 0.75rem;
-    background-color: var(--status-bg);
+    background-color: var(--nav-bg);
     border-radius: 8px;
     margin-bottom: 1.5rem;
     font-size: 0.95rem;
@@ -154,17 +152,18 @@
 /* Modal Enhancements */
 .modal-content {
     border-radius: 8px;
-    border: none;
-    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border-color);
+    background-color: var(--card-bg);
+    color: var(--text-color);
 }
 
 .modal-header {
-    border-bottom: 1px solid var(--card-border-color);
+    border-bottom: 1px solid var(--border-color);
     padding: 1rem;
 }
 
 .modal-footer {
-    border-top: 1px solid var(--card-border-color);
+    border-top: 1px solid var(--border-color);
     padding: 1rem;
 }
 
@@ -181,6 +180,35 @@
 
 #themeToggle i {
     font-size: 1.1rem;
+}
+
+/* Body Background */
+body {
+    background-color: var(--body-bg);
+    color: var(--text-color);
+}
+
+/* Navbar Background */
+.navbar {
+    background-color: var(--nav-bg) !important;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+.dropdown-item {
+    color: var(--text-color);
+}
+
+.dropdown-item:hover {
+    background-color: var(--nav-bg);
+}
+
+.dropdown-divider {
+    border-color: var(--border-color);
 }
 
 /* Animations */

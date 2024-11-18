@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pool Table Management</title>
+    <title>Pool Hall Manager</title>
     <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
     <link rel="stylesheet" href="/static/css/custom.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -12,7 +12,12 @@
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <i class="bi bi-dribbble me-2"></i>Pool Table Manager
+                <svg class="me-2" width="24" height="24" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="11" fill="black"/>
+                    <circle cx="12" cy="12" r="5" fill="white"/>
+                    <text x="12" y="14" font-size="8" fill="black" text-anchor="middle">8</text>
+                </svg>
+                Pool Hall Manager
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                 <span class="navbar-toggler-icon"></span>
@@ -24,9 +29,6 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/">Tables</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/daily-report">Reports</a>
-                        </li>
                         {% if current_user.is_admin %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -34,6 +36,7 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="/setup">Business Setup</a></li>
+                                <li><a class="dropdown-item" href="/daily-report">Reports</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="#">User Management</a></li>
                             </ul>
