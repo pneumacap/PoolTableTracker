@@ -88,10 +88,18 @@ document.addEventListener('DOMContentLoaded', function() {
     function isInPeakHours(time) {
         const timeStr = time.getHours().toString().padStart(2, '0') + ':' + 
                        time.getMinutes().toString().padStart(2, '0');
-        return timeStr >= PEAK_START && timeStr <= PEAK_END;
+        const currentTime = timeStr;
+        const peakStart = PEAK_START;
+        const peakEnd = PEAK_END;
+        
+        // Handle overnight peak hours if needed
+        if (peakEnd < peakStart) {
+            return currentTime >= peakStart || currentTime <= peakEnd;
+        }
+        return currentTime >= peakStart && currentTime <= peakEnd;
     }
 
-    function calculateCost(startTime, currentTime) {
+    function calculateCost(startTime, currentTime, table) {
         const elapsedMs = Math.max(0, currentTime - startTime);
         let elapsedMinutes = elapsedMs / (1000 * 60);
         
@@ -124,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } else {
             // Session within same hour
-            const rate = isInPeakHours(currentTime) ? PEAK_RATE : RATE_PER_HOUR;
+            const rate = table.isPeakRate ? PEAK_RATE : RATE_PER_HOUR;
             totalCost = (actualMinutes / 60) * rate;
         }
         
@@ -141,7 +149,14 @@ document.addEventListener('DOMContentLoaded', function() {
         
         table.timer = setInterval(() => {
             const now = new Date();
-            const result = calculateCost(table.startTime, now);
+            const isPeakTime = isInPeakHours(now);
+            
+            // Update rate if it changed
+            if (table.isPeakRate !== isPeakTime) {
+                table.isPeakRate = isPeakTime;
+            }
+            
+            const result = calculateCost(table.startTime, now, table);
             
             const timerElement = tableEl.querySelector('.timer');
             const elapsedTime = now - table.startTime;
