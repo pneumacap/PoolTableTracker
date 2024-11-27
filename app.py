@@ -1,7 +1,7 @@
 import os
 import time
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from flask import Flask, render_template, jsonify, request, Response, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
@@ -137,13 +137,9 @@ def start_table(table_id):
         return jsonify({'status': 'success'})
     return jsonify({'status': 'error', 'message': 'Table already occupied'})
 
-@app.route('/table/<int:table_id>/stop', methods=['POST'])
+@app.route('/table/<int:table_id>/end', methods=['POST'])
 @login_required
-def stop_table(table_id):
-    config = models.BusinessConfig.query.first()
-    MINIMUM_MINUTES = config.minimum_minutes if config else 30
-    RATE_PER_HOUR = config.standard_rate if config else 30
-
+def end_table(table_id):
     table = models.PoolTable.query.get_or_404(table_id)
     session = models.TableSession.query.filter_by(
         table_id=table_id, 
@@ -154,28 +150,28 @@ def stop_table(table_id):
         end_time = datetime.utcnow()
         session.end_time = end_time
         
-        duration = (end_time - session.start_time).total_seconds() / 60
-        actual_duration = max(MINIMUM_MINUTES, duration)
-        session.actual_duration = round(actual_duration)
+        # Calculate actual duration in minutes
+        actual_duration = int((end_time - session.start_time).total_seconds() / 60)
+        session.actual_duration = actual_duration
         
-        # Calculate rate based on time of day
-        current_time = end_time.time()
-        if config and config.peak_start_time <= current_time <= config.peak_end_time:
-            rate = config.peak_rate
-        else:
-            rate = RATE_PER_HOUR
-            
-        session.final_cost = round((actual_duration / 60) * rate, 2)
+        # Get minimum minutes from config
+        config = models.BusinessConfig.query.first()
+        charged_duration = max(actual_duration, config.minimum_minutes)
+        
+        # Calculate final cost based on charged duration
+        session.final_cost = calculate_cost(session.start_time, end_time, charged_duration)
         
         table.is_occupied = False
         db.session.commit()
         
         return jsonify({
             'status': 'success',
-            'actual_duration': session.actual_duration,
-            'final_cost': session.final_cost,
-            'minimum_applied': duration < MINIMUM_MINUTES
+            'actual_duration': actual_duration,
+            'charged_duration': charged_duration,
+            'minimum_minutes': config.minimum_minutes,
+            'final_cost': session.final_cost
         })
+    
     return jsonify({'status': 'error', 'message': 'No active session found'})
 
 @app.route('/stream')
@@ -222,3 +218,61 @@ def stream():
                 continue
     
     return Response(event_stream(), mimetype='text/event-stream')
+
+def calculate_cost(start_time, end_time, duration_minutes):
+    """Calculate the total cost for a session considering peak/off-peak rates"""
+    config = models.BusinessConfig.query.first()
+    
+    # Convert UTC times to local time for rate calculation
+    local_start = start_time.replace(tzinfo=timezone.utc).astimezone()
+    local_end = end_time.replace(tzinfo=timezone.utc).astimezone()
+    
+    # If session is within same hour, use simple calculation
+    if local_start.hour == local_end.hour:
+        rate = config.peak_rate if is_peak_hour(local_start) else config.standard_rate
+        return (duration_minutes / 60) * rate
+    
+    # For sessions spanning multiple hours, calculate per-hour costs
+    total_cost = 0
+    current_time = local_start
+    remaining_minutes = duration_minutes
+    
+    while remaining_minutes > 0:
+        # Minutes in this hour
+        if current_time.hour == local_start.hour:
+            minutes_in_hour = 60 - current_time.minute
+        else:
+            minutes_in_hour = min(60, remaining_minutes)
+        
+        minutes_to_charge = min(minutes_in_hour, remaining_minutes)
+        rate = config.peak_rate if is_peak_hour(current_time) else config.standard_rate
+        
+        total_cost += (minutes_to_charge / 60) * rate
+        remaining_minutes -= minutes_to_charge
+        
+        # Move to next hour
+        current_time = (current_time + timedelta(hours=1)).replace(minute=0)
+    
+    return total_cost
+
+def is_peak_hour(time):
+    """Check if given time is during peak hours"""
+    config = models.BusinessConfig.query.first()
+    
+    # The times are already in time format from the model
+    peak_start = config.peak_start_time
+    peak_end = config.peak_end_time
+    current_time = time.time()
+    
+    if peak_end > peak_start:
+        # Normal time range (e.g., 17:00-22:00)
+        return peak_start <= current_time <= peak_end
+    else:
+        # Overnight time range (e.g., 22:00-02:00)
+        return current_time >= peak_start or current_time <= peak_end
+
+@app.context_processor
+def inject_business_config():
+    """Make business config available to all templates"""
+    config = models.BusinessConfig.query.first()
+    return dict(business_config=config)

@@ -1,60 +1,62 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col text-center">
-        <h2 class="mb-3">Pool Tables</h2>
-        <p class="rate-display">Standard Rate: $30/hour <span class="text-warning ms-2">Peak Rate: $45/hour (17:00-22:00)</span></p>
+<div class="container-fluid px-4">
+    <div class="row mb-4">
+        <div class="col text-center">
+            <h2 class="mb-3">Pool Tables</h2>
+            <p class="rate-display">Standard Rate: $30/hour <span class="text-warning ms-2">Peak Rate: $45/hour (17:00-22:00)</span></p>
+        </div>
     </div>
-</div>
 
-<div class="row g-4" id="tables-grid">
-    {% for table in tables %}
-    <div class="col-md-6">
-        <div class="card h-100" id="table-{{ table.id }}" 
-             data-table-id="{{ table.id }}"
-             data-status="{{ 'occupied' if table.is_occupied else 'available' }}">
-            <div class="card-body">
-                <div class="text-center mb-3">
-                    <img src="/static/images/pool-table.svg" alt="Pool Table" class="table-icon">
-                </div>
-                <h5 class="card-title text-center mb-3">Table {{ table.table_number }}</h5>
-                
-                <div class="table-status">
-                    <span class="status-indicator"></span>
-                    <span class="status-text fw-bold">{{ 'Occupied' if table.is_occupied else 'Available' }}</span>
-                </div>
-                
-                <div class="customer-info d-none">
-                    <div class="row">
-                        <div class="col-12 mb-3">
-                            <h6 class="mb-1">Customer</h6>
-                            <p class="customer-name mb-0 fs-5"></p>
-                        </div>
-                        <div class="col-6">
-                            <h6 class="mb-1">Time</h6>
-                            <p class="timer mb-0"></p>
-                        </div>
-                        <div class="col-6">
-                            <h6 class="mb-1">Cost</h6>
-                            <p class="mb-0">$<span class="cost">0.00</span></p>
+    <div class="row g-3" id="tables-grid">
+        {% for table in tables %}
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card h-100" id="table-{{ table.id }}" 
+                 data-table-id="{{ table.id }}"
+                 data-status="{{ 'occupied' if table.is_occupied else 'available' }}">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <img src="/static/images/pool-table.svg" alt="Pool Table" class="table-icon">
+                    </div>
+                    <h5 class="card-title text-center mb-3">Table {{ table.table_number }}</h5>
+                    
+                    <div class="table-status">
+                        <span class="status-indicator"></span>
+                        <span class="status-text fw-bold">{{ 'Occupied' if table.is_occupied else 'Available' }}</span>
+                    </div>
+                    
+                    <div class="customer-info d-none">
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <h6 class="mb-1">Customer</h6>
+                                <p class="customer-name mb-0 fs-5"></p>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="mb-1">Time</h6>
+                                <p class="timer mb-0"></p>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="mb-1">Cost</h6>
+                                <p class="mb-0">$<span class="cost">0.00</span></p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="table-controls mt-3">
-                    <button class="btn btn-success btn-start w-100 mb-2">Start Session</button>
-                    <button class="btn btn-danger btn-stop w-100 d-none">End Session</button>
+                    
+                    <div class="table-controls mt-3">
+                        <button class="btn btn-success btn-start w-100 mb-2">Start Session</button>
+                        <button class="btn btn-danger btn-stop w-100 d-none">End Session</button>
+                    </div>
                 </div>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 
 <!-- Start Session Modal -->
 <div class="modal fade" id="startSessionModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Start New Session</h5>
@@ -79,7 +81,7 @@
 
 <!-- Session Summary Modal -->
 <div class="modal fade" id="sessionSummaryModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Session Summary</h5>
@@ -91,15 +93,15 @@
                         <span class="display-1 text-success">✓</span>
                         <h4 class="mt-3">Session Complete</h4>
                     </div>
-                    <div class="card bg-dark mb-3">
+                    <div class="card summary-card mb-3">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-6 border-end">
-                                    <p class="text-muted mb-1">Actual Duration</p>
+                                    <p class="summary-label mb-1">Actual Duration</p>
                                     <p class="fs-5 mb-0" id="actualDuration"></p>
                                 </div>
                                 <div class="col-6">
-                                    <p class="text-muted mb-1">Time Charged</p>
+                                    <p class="summary-label mb-1">Time Charged</p>
                                     <p class="fs-5 mb-0" id="summaryTime"></p>
                                 </div>
                             </div>

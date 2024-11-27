@@ -63,7 +63,8 @@
     background-color: var(--card-bg);
     border-color: var(--border-color);
     box-shadow: var(--card-shadow);
-    padding: 1rem;
+    padding: 0.75rem;
+    width: 100%;
 }
 
 .card:hover {
@@ -73,14 +74,34 @@
 
 /* Table Icon */
 .table-icon {
-    width: 160px;
-    height: 120px;
+    width: 95%;
+    height: auto;
+    max-width: 300px;
     transition: transform 0.3s ease;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    margin: 0.5rem auto;
+    display: block;
 }
 
 [data-status="occupied"] .table-icon {
     transform: scale(1.02);
+    opacity: 0.8;
+}
+
+/* Ensure the SVG uses the current theme colors */
+.table-icon svg {
+    width: 100%;
+    height: 100%;
+    color: currentColor;
+}
+
+/* Add specific coloring for light/dark themes */
+[data-bs-theme=light] .table-icon svg rect:first-child {
+    color: #2b2b2b;
+}
+
+[data-bs-theme=dark] .table-icon svg rect:first-child {
+    color: #4a4a4a;
 }
 
 /* Status Styles */
@@ -109,8 +130,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0.75rem 0;
-    padding: 0.5rem;
+    margin: 0.5rem 0;
+    padding: 0.4rem;
     border-radius: 16px;
     background-color: rgba(0,0,0,0.05);
     color: var(--text-color);
@@ -123,16 +144,19 @@
 /* Timer Display */
 .timer {
     font-family: 'Courier New', monospace;
-    font-size: 1.3em;
+    font-size: 1.1em;
     font-weight: bold;
     color: var(--link-color);
+    min-width: 140px;
+    display: inline-block;
+    text-align: center;
 }
 
 /* Customer Info */
 .customer-info {
     text-align: center;
-    margin: 0.75rem 0;
-    padding: 0.75rem;
+    margin: 0.5rem 0;
+    padding: 0.5rem;
     border-radius: 8px;
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -147,7 +171,7 @@
 }
 
 .customer-info h6 {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
     margin-bottom: 0.25rem;
 }
@@ -278,4 +302,121 @@ body {
 /* Animations */
 @keyframes spin {
     to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Add these styles for better card handling in light/dark modes */
+
+.card {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+.card-body {
+    color: var(--text-color);
+}
+
+.card-title {
+    color: var(--text-color);
+}
+
+.display-4 {
+    color: var(--text-color);
+}
+
+/* Optional: Add some hover effects for better interaction */
+.card:hover {
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+/* Card text colors */
+[data-bs-theme=light] .card-title {
+    color: #212529 !important;
+}
+
+[data-bs-theme=light] .card-text.display-4 {
+    color: #212529 !important;
+}
+
+[data-bs-theme=light] .text-muted {
+    color: #6c757d !important;
+}
+
+/* Add max-width to table cards */
+#tables-grid .card {
+    max-width: none;
+    margin: 0;
+}
+
+/* Adjust modal sizes for better compatibility */
+.modal-dialog {
+    max-width: 400px;
+}
+
+.modal-body {
+    padding: 1rem;
+}
+
+/* Adjust grid spacing */
+#tables-grid {
+    --bs-gutter-x: 1rem;
+    --bs-gutter-y: 1rem;
+}
+
+/* Make cards more compact */
+.card-body {
+    padding: 0.75rem;
+}
+
+.table-status {
+    margin: 0.5rem 0;
+    padding: 0.4rem;
+}
+
+.customer-info {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+}
+
+/* Adjust text sizes for better fit */
+.card-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.timer {
+    font-size: 1.1em;
+}
+
+.customer-info h6 {
+    font-size: 0.8rem;
+}
+
+/* Container padding to match header */
+.container-fluid {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Session Summary Modal Styles */
+.summary-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+.summary-label {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.modal-body .border-end {
+    border-color: var(--border-color) !important;
+}
+
+#actualDuration, #summaryTime {
+    color: var(--text-color);
+}
+
+.modal-content {
+    background-color: var(--card-bg);
 }

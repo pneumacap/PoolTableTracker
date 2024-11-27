@@ -1,33 +1,111 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" fill="none">
-    <!-- Wooden border (brown) -->
-    <rect x="10" y="10" width="140" height="100" rx="6" fill="#4A2F1D"/>
-    
-    <!-- Felt surface (green) -->
-    <rect x="20" y="20" width="120" height="80" rx="3" fill="#1B6E43"/>
-    
-    <!-- Corner pockets (black) -->
-    <circle cx="15" cy="15" r="5" fill="#000000" opacity="0.9"/>
-    <circle cx="145" cy="15" r="5" fill="#000000" opacity="0.9"/>
-    <circle cx="15" cy="105" r="5" fill="#000000" opacity="0.9"/>
-    <circle cx="145" cy="105" r="5" fill="#000000" opacity="0.9"/>
-    
-    <!-- Side pockets (black) -->
-    <circle cx="80" cy="12" r="4" fill="#000000" opacity="0.9"/>
-    <circle cx="80" cy="108" r="4" fill="#000000" opacity="0.9"/>
-    
-    <!-- Diamond sights (white) -->
-    <circle cx="50" cy="20" r="1.5" fill="#FFFFFF" opacity="0.7"/>
-    <circle cx="110" cy="20" r="1.5" fill="#FFFFFF" opacity="0.7"/>
-    <circle cx="50" cy="100" r="1.5" fill="#FFFFFF" opacity="0.7"/>
-    <circle cx="110" cy="100" r="1.5" fill="#FFFFFF" opacity="0.7"/>
-    <circle cx="20" cy="45" r="1.5" fill="#FFFFFF" opacity="0.7"/>
-    <circle cx="20" cy="75" r="1.5" fill="#FFFFFF" opacity="0.7"/>
-    <circle cx="140" cy="45" r="1.5" fill="#FFFFFF" opacity="0.7"/>
-    <circle cx="140" cy="75" r="1.5" fill="#FFFFFF" opacity="0.7"/>
-    
-    <!-- Table cushions (darker brown) -->
-    <rect x="20" y="20" width="120" height="5" fill="#3A251B" opacity="0.8"/>
-    <rect x="20" y="95" width="120" height="5" fill="#3A251B" opacity="0.8"/>
-    <rect x="20" y="20" width="5" height="80" fill="#3A251B" opacity="0.8"/>
-    <rect x="135" y="20" width="5" height="80" fill="#3A251B" opacity="0.8"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="1156.4" width="2048" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 2048 1156.39" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<defs>
+<linearGradient id="j">
+<stop stop-color="#b3b3b3" offset="0"/>
+<stop stop-color="#b3b3b3" stop-opacity="0" offset="1"/>
+</linearGradient>
+<linearGradient id="k">
+<stop stop-color="#b15454" offset="0"/>
+<stop stop-color="#b15454" stop-opacity="0" offset="1"/>
+</linearGradient>
+<linearGradient id="h">
+<stop stop-color="#999" offset="0"/>
+<stop stop-color="#999" stop-opacity="0" offset="1"/>
+</linearGradient>
+<linearGradient id="i">
+<stop stop-color="#838383" offset="0"/>
+<stop stop-color="#838383" stop-opacity="0" offset="1"/>
+</linearGradient>
+<radialGradient id="g" gradientUnits="userSpaceOnUse" cy="821.32" cx="77.857" gradientTransform="matrix(3.5493 0 .000015109 2.0644 -1266.3 -2170.8)" r="302">
+<stop stop-color="#30ac30" offset="0"/>
+<stop stop-color="#30ac30" stop-opacity="0" offset="1"/>
+</radialGradient>
+<filter id="c" style="color-interpolation-filters:sRGB" height="1.048" width="1.048" y="-.024" x="-.024">
+<feGaussianBlur stdDeviation="0.36"/>
+</filter>
+<linearGradient id="b" y2="972.43" xlink:href="#i" gradientUnits="userSpaceOnUse" x2="-230.66" y1="997.68" x1="-273.44"/>
+<radialGradient id="a" xlink:href="#h" gradientUnits="userSpaceOnUse" cy="983.03" cx="-244.48" gradientTransform="matrix(1.2921 .17699 -.14782 1.0792 216.73 -34.566)" r="18"/>
+<filter id="f" style="color-interpolation-filters:sRGB" height="1.048" width="1.048" y="-.024" x="-.024">
+<feGaussianBlur stdDeviation="0.32"/>
+</filter>
+<linearGradient id="e" y2="968.47" xlink:href="#k" gradientUnits="userSpaceOnUse" x2="72.164" y1="1013.9" x1="72.164"/>
+<radialGradient id="d" xlink:href="#j" gradientUnits="userSpaceOnUse" cy="997.26" cx="70.548" gradientTransform="matrix(1.0068 -1.0068 .92639 .92639 -924.34 144.43)" r="16"/>
+</defs>
+<g transform="translate(0 104.03)">
+<g>
+<rect stroke-linejoin="round" fill="#a05a2c" transform="scale(-1)" ry="58.435" width="2044.9" stroke="#a05a2c" stroke-linecap="round" y="-1050.8" x="-2046.5" height="1153.3" stroke-width="3.073"/>
+<rect transform="scale(-1)" height="965.71" width="1857.3" y="-957.02" x="-1952.7" fill="#007430"/>
+<rect opacity=".3" transform="scale(-1)" height="965.71" width="4.6126" y="-957.02" x="-1519.2" fill="#fff"/>
+<rect transform="scale(-1)" height="95.341" width="1722" y="8.6951" x="-1883.5" fill="#a05a2c"/>
+<rect transform="scale(-1)" height="95.341" width="1722" y="-1052.4" x="-1883.5" fill="#a05a2c"/>
+<rect transform="scale(-1)" height="965.71" width="1857.3" y="-957.02" x="-1952.7" fill="url(#g)"/>
+<rect transform="scale(-1)" height="830.39" width="95.327" y="-889.36" x="-2048" fill="#a05a2c"/>
+<rect transform="scale(-1)" height="830.39" width="95.327" y="-889.36" x="-95.327" fill="#a05a2c"/>
+<g fill="#5aa02c">
+<path d="m1952.7 889.36-36.901-38.64v-754.68l36.901-37.071z"/>
+<path d="m95.327 889.36 36.901-38.64v-754.68l-36.901-37.071z"/>
+<path d="m1883.5-8.5225-38.274 36.561h-768.67l-15.557-36.561z"/>
+<path d="m150.04-8.3154 37.84 36.147h759.96l15.381-36.147z"/>
+<path d="m1883.5 957.02-38.274-36.561h-768.67l-15.557 36.561z"/>
+</g>
+<g transform="matrix(-3.0751 0 0 -3.0755 1229.4 3002.3)">
+<circle stroke-linejoin="round" cx="-230.33" stroke-linecap="round" stroke="url(#b)" filter="url(#c)" cy="974.95" r="18" stroke-width="1.6"/>
+<circle opacity=".4" cy="974.95" cx="-230.33" r="18" fill="url(#a)"/>
+</g>
+<g transform="matrix(0 -3.0755 3.0751 0 -1060.4 239.51)">
+<circle stroke-linejoin="round" stroke-width="1.6" stroke-linecap="round" stroke="url(#b)" filter="url(#c)" cy="974.95" cx="-230.33" r="18"/>
+<circle opacity=".4" cx="-230.33" cy="974.95" r="18" fill="url(#a)"/>
+</g>
+<g transform="matrix(3.0751 0 0 3.0755 803.74 -2050.6)">
+<circle stroke-linejoin="round" cx="-230.33" stroke-linecap="round" stroke="url(#b)" filter="url(#c)" cy="974.95" r="18" stroke-width="1.6"/>
+<circle opacity=".4" cy="974.95" cx="-230.33" r="18" fill="url(#a)"/>
+</g>
+<g transform="matrix(0 3.0755 -3.0751 0 3093.5 712.17)">
+<circle stroke-linejoin="round" stroke-width="1.6" stroke-linecap="round" stroke="url(#b)" filter="url(#c)" cy="974.95" cx="-230.33" r="18"/>
+<circle opacity=".4" cx="-230.33" cy="974.95" r="18" fill="url(#a)"/>
+</g>
+<path d="m151.6 956.75 37.84-36.147h759.96l15.381 36.147z" fill="#5aa02c"/>
+<g transform="matrix(-3.0751 0 0 -3.0755 1229.4 3002.3)">
+<circle stroke-linejoin="round" stroke-linecap="round" stroke="url(#e)" filter="url(#f)" cy="983.12" cx="70.548" r="16"/>
+<circle opacity=".3" cx="70.548" cy="983.12" r="16" fill="url(#d)"/>
+</g>
+<g transform="matrix(-3.0751 0 0 3.0755 1229.4 -2053.9)">
+<circle stroke-linejoin="round" cx="70.548" stroke-linecap="round" stroke="url(#e)" filter="url(#f)" cy="983.12" r="16"/>
+<circle opacity=".3" cy="983.12" cx="70.548" r="16" fill="url(#d)"/>
+</g>
+</g>
+</g>
+<g transform="translate(0 104.03)" fill="#fff">
+<g transform="matrix(1.1959 0 0 1.1961 7.9063 -192.51)">
+<circle cy="774.57" cx="34.255" r="5.0508"/>
+<circle cx="34.255" cy="557.39" r="5.0508"/>
+<circle cy="340.2" cx="32.235" r="5.0508"/>
+</g>
+<g transform="matrix(1.1959 0 0 1.1961 1960.6 -192.51)">
+<circle cx="34.255" cy="774.57" r="5.0508"/>
+<circle cy="557.39" cx="34.255" r="5.0508"/>
+<circle cx="32.235" cy="340.2" r="5.0508"/>
+</g>
+<g transform="matrix(1.1959 0 0 1.1961 5.4716 -205.01)">
+<g transform="matrix(0 1 -1 0 1775.5 978.15)">
+<circle cx="34.255" cy="774.57" r="5.0508"/>
+<circle cy="557.39" cx="34.255" r="5.0508"/>
+<circle cx="32.235" cy="340.2" r="5.0508"/>
+</g>
+<circle cx="1012.4" transform="rotate(90)" cy="-265.52" r="5.0508"/>
+<circle transform="rotate(90)" cy="-482.7" cx="1012.4" r="5.0508"/>
+<circle cx="1012.4" transform="rotate(90)" cy="-699.89" r="5.0508"/>
+</g>
+<g transform="matrix(1.1959 0 0 1.1961 -25.28 -1271.2)">
+<g transform="matrix(0 1 -1 0 1775.5 978.15)">
+<circle cy="774.57" cx="34.255" r="5.0508"/>
+<circle cx="34.255" cy="557.39" r="5.0508"/>
+<circle cy="340.2" cx="32.235" r="5.0508"/>
+</g>
+<circle transform="rotate(90)" cy="-265.52" cx="1012.4" r="5.0508"/>
+<circle cx="1012.4" transform="rotate(90)" cy="-482.7" r="5.0508"/>
+<circle transform="rotate(90)" cy="-699.89" cx="1012.4" r="5.0508"/>
+</g>
+</g>
 </svg>

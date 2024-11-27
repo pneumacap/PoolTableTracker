@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     let RATE_PER_HOUR = 30.0;
     let PEAK_RATE = 45.0;
-    let PEAK_START = '17:00';
-    let PEAK_END = '22:00';
+    let PEAK_START = '19:00';
+    let PEAK_END = '01:00';
     let MINIMUM_MINUTES = 30;
     const tables = {};
     let startModal, summaryModal;
@@ -159,8 +159,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = calculateCost(table.startTime, now, table);
             
             const timerElement = tableEl.querySelector('.timer');
-            const elapsedTime = now - table.startTime;
-            timerElement.textContent = formatDuration(elapsedTime / 1000);
+            const elapsedSeconds = (now - table.startTime) / 1000;
+            timerElement.textContent = formatDuration(elapsedSeconds);
             
             const costElement = tableEl.querySelector('.cost');
             costElement.textContent = result.cost.toFixed(2);
@@ -175,21 +175,33 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 1000);
     }
 
-    function showSummaryModal(finalTime, finalCost, actualDuration, minimumApplied) {
-        document.getElementById('summaryTime').textContent = finalTime;
-        document.getElementById('summaryCost').textContent = finalCost.toFixed(2);
-        
-        const minimumNotice = document.getElementById('minimumTimeNotice');
-        if (minimumApplied) {
-            minimumNotice.textContent = `Minimum ${MINIMUM_MINUTES} minutes charge applied`;
-            minimumNotice.classList.remove('d-none');
+    function showSessionSummary(sessionData) {
+        // Format actual duration
+        const actualMinutes = sessionData.actual_duration;
+        const actualHours = Math.floor(actualMinutes / 60);
+        const actualMins = actualMinutes % 60;
+        const actualDurationText = `${actualHours}h ${actualMins.toString().padStart(2, '0')}m`;
+
+        // Format charged duration (same as actual if no minimum applied)
+        const chargedMinutes = Math.max(actualMinutes, sessionData.minimum_minutes);
+        const chargedHours = Math.floor(chargedMinutes / 60);
+        const chargedMins = chargedMinutes % 60;
+        const chargedDurationText = `${chargedHours}h ${chargedMins.toString().padStart(2, '0')}m`;
+
+        document.getElementById('actualDuration').textContent = actualDurationText;
+        document.getElementById('summaryTime').textContent = chargedDurationText;
+
+        // Show minimum time notice if applicable
+        const minimumTimeNotice = document.getElementById('minimumTimeNotice');
+        if (chargedMinutes > actualMinutes) {
+            minimumTimeNotice.textContent = `Minimum ${sessionData.minimum_minutes} minutes charge applied`;
+            minimumTimeNotice.classList.remove('d-none');
         } else {
-            minimumNotice.classList.add('d-none');
+            minimumTimeNotice.classList.add('d-none');
         }
+
+        document.getElementById('summaryCost').textContent = sessionData.final_cost.toFixed(2);
         
-        document.getElementById('actualDuration').textContent = 
-            `${Math.floor(actualDuration / 60)}h ${actualDuration % 60}m`;
-            
         summaryModal.show();
     }
 
@@ -241,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
             stopButton.classList.add('loading');
             tableEl.classList.add('loading');
             
-            const response = await fetch(`/table/${tableId}/stop`, {
+            const response = await fetch(`/table/${tableId}/end`, {
                 method: 'POST'
             });
             
@@ -252,18 +264,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 table.startTime = null;
                 table.lastRateCheck = null;
                 
-                showSummaryModal(
-                    formatDuration(data.actual_duration * 60),
-                    data.final_cost,
-                    data.actual_duration,
-                    data.minimum_applied
-                );
+                showSessionSummary(data);
+                
+                // Reset table display
+                tableEl.querySelector('.timer').textContent = '0h 00m';
+                tableEl.querySelector('.cost').textContent = '0.00';
+                tableEl.querySelector('.customer-name').textContent = '';
+                tableEl.classList.remove('occupied');
             } else {
-                alert(data.message || 'Failed to stop session');
+                alert('Failed to end session: ' + (data.message || 'Unknown error'));
             }
         } catch (error) {
-            console.error('Error stopping session:', error);
-            alert('Failed to stop session. Please try again.');
+            console.error('Error ending session:', error);
+            alert('Failed to end session. Please try again.');
         } finally {
             stopButton.classList.remove('loading');
             tableEl.classList.remove('loading');
@@ -306,10 +319,34 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    function formatDuration(totalSeconds) {
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = Math.floor(totalSeconds % 60);
-        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    function formatDuration(seconds) {
+        if (typeof seconds === 'number') {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = Math.floor(seconds % 60);
+            
+            // Format with leading zeros and consistent spacing
+            return `${hours}h ${minutes.toString().padStart(2, '0')}m ${secs.toString().padStart(2, '0')}s`;
+        }
+        // For when minutes are passed directly
+        const hours = Math.floor(seconds / 60);
+        const mins = Math.floor(seconds % 60);
+        return `${hours}h ${mins.toString().padStart(2, '0')}m`;
+    }
+
+    function createTableCard(table) {
+        const template = document.createElement('div');
+        template.innerHTML = `
+            <div class="card" data-table-id="${table.id}" data-status="available">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Table ${table.table_number}</h5>
+                    <svg class="table-icon" viewBox="0 0 300 200">
+                        <use href="#pool-table-template" />
+                    </svg>
+                    <!-- Rest of your card content -->
+                </div>
+            </div>
+        `;
+        return template.firstElementChild;
     }
 });

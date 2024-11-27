@@ -45,6 +45,7 @@ class TableSession(db.Model):
     start_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     end_time = db.Column(db.DateTime, nullable=True)
     actual_duration = db.Column(db.Integer, nullable=True)  # in minutes
+    charged_duration = db.Column(db.Integer, nullable=True)  # in minutes
     final_cost = db.Column(db.Float, nullable=True)
     operator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
 

@@ -1,6 +1,7 @@
 from app import app, db
 from models import PoolTable, User, BusinessConfig
 from datetime import datetime
+from migrations import migrate
 
 def initialize_tables():
     with app.app_context():
@@ -20,12 +21,12 @@ def initialize_tables():
         if not config:
             config = BusinessConfig()
             config.business_name = 'Pool Hall'
-            config.num_tables = 4
-            config.standard_rate = 30.0
-            config.peak_rate = 45.0
+            config.num_tables = 6
+            config.standard_rate = 15.0
+            config.peak_rate = 20.0
             config.minimum_minutes = 30
-            config.peak_start_time = datetime.strptime('17:00', '%H:%M').time()
-            config.peak_end_time = datetime.strptime('22:00', '%H:%M').time()
+            config.peak_start_time = datetime.strptime('18:00', '%H:%M').time()
+            config.peak_end_time = datetime.strptime('23:00', '%H:%M').time()
             config.updated_by_id = admin.id
             db.session.add(config)
             db.session.commit()
