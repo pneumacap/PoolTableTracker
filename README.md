@@ -22,4 +22,4 @@ A comprehensive pool table management system designed for tracking and billing m
 
 ## Installation
 
-1. Clone the repository: 
+1. Clone the repository:
