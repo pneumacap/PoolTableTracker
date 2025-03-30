@@ -21,5 +21,3 @@ A comprehensive pool table management system designed for tracking and billing m
 - Styling: Bootstrap 5
 
 ## Installation
-
-1. Clone the repository:
